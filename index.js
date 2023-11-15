@@ -1,40 +1,31 @@
-// Import files 
-const express = require('express')
-const app = express()
-const expresslayouts= require('express-ejs-layouts') 
-const port = 3000
- 
-// Static Files 
-app.use(express.static('public'))
-app.use('/css', express.static(__dirname+ 'public/css'))
-app.use('/js', express.static(__dirname+ 'public/js'))
-app.use('/img', express.static(__dirname+ 'public/img'))
+//imports
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const session = require("express-session");
 
-app.get('', (req, res) =>{
-    res.render('index', { text:'Ayaan Home Page'})
-})
+const app = express();
+const PORT = process.env.PORT || 2000;
 
-app.get('/about', (req, res) =>{
-    res.render('about', { text:'About Ayaan'})
-})
+// database connection to mongo
 
-app.get('/project', (req, res) =>{
-    res.render('project', { text:'Portfolio'})
+mongoose.connect(process.env.DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  
+  const db = mongoose.connection;
+  db.on('error', (error) => console.error('MongoDB connection error:', error));
+  db.once('open', () => console.log('Connected to the database'));
+  
 
-})
+app.get("/", (req, res) => {
+    res.send("Hello World");
 
-app.get('/contact', (req, res) =>{
-    res.render('contact', { text:'Contact'})
+});
 
-})
-//above are the files with the ejs template and calling it.
-
-//Set the Views 
-app.use(expresslayouts)
-app.set('layout', './layouts/full-width')
-app.set('view engine', 'ejs')
+app.listen(PORT, () => {
+    console.log(`Server started at http://localhost:${PORT}`);
+});
 
 
-
-//Listen to the port 3000 
-app.listen(port, () => console.info(`Listening on port ${port}`))
